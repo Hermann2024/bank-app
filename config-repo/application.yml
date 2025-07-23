@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: common-config
+  cloud:
+    config:
+      fail-fast: true
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.cloud: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*' 

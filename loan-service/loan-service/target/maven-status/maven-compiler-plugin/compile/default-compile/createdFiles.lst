@@ -1,0 +1,5 @@
+com/bank/loan/App.class
+com/bank/loan/service/LoanService.class
+com/bank/loan/entity/Loan.class
+com/bank/loan/LoanController.class
+com/bank/loan/repository/LoanRepository.class
