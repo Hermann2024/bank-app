@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, Legend, ResponsiveContainer } from 'recharts';
 import { apiFetch } from '../services/api';
 import { getUser } from '../services/authService';
+import { useFeedback } from '../components/FeedbackProvider';
 
 const COLORS = ['#d32f2f', '#b71c1c', '#f44336', '#ff7961', '#ba000d'];
 
@@ -11,7 +12,8 @@ export default function Dashboard() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(''); // utilisé uniquement pour le rendu conditionnel
+  const { showMessage } = useFeedback();
 
   useEffect(() => {
     async function fetchData() {
@@ -31,7 +33,7 @@ export default function Dashboard() {
           setTransactions([]);
         }
       } catch (e: any) {
-        setError(e.message || 'Erreur API');
+        showMessage(e.message || 'Erreur API', 'error');
       } finally {
         setLoading(false);
       }
@@ -65,7 +67,6 @@ export default function Dashboard() {
     <Box p={3}>
       <Typography variant="h4" gutterBottom>Dashboard</Typography>
       {loading && <CircularProgress />}
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
       {!loading && !error && (
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>

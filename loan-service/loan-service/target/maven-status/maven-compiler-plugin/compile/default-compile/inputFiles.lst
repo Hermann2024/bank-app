@@ -1,5 +1,6 @@
 /Users/hermann.nana/bank-account/loan-service/loan-service/src/main/java/com/bank/loan/App.java
 /Users/hermann.nana/bank-account/loan-service/loan-service/src/main/java/com/bank/loan/LoanController.java
+/Users/hermann.nana/bank-account/loan-service/loan-service/src/main/java/com/bank/loan/config/SecurityConfig.java
 /Users/hermann.nana/bank-account/loan-service/loan-service/src/main/java/com/bank/loan/entity/Loan.java
 /Users/hermann.nana/bank-account/loan-service/loan-service/src/main/java/com/bank/loan/repository/LoanRepository.java
 /Users/hermann.nana/bank-account/loan-service/loan-service/src/main/java/com/bank/loan/service/LoanService.java

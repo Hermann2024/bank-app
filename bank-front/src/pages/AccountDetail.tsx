@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, Paper, List, ListItem, ListItemText, CircularProgress, Alert, Button, TextField, Snackbar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { apiFetch } from '../services/api';
+import { useFeedback } from '../components/FeedbackProvider';
 
 export default function AccountDetail() {
   const { id } = useParams();
@@ -10,7 +11,7 @@ export default function AccountDetail() {
   const [beneficiaries, setBeneficiaries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({ open: false, message: '', severity: 'success' });
+  const { showMessage } = useFeedback();
   const [newBeneficiary, setNewBeneficiary] = useState({ name: '', iban: '' });
   // Ajout pour le virement
   const [transfer, setTransfer] = useState({ beneficiaryId: '', amount: '' });
@@ -39,7 +40,7 @@ export default function AccountDetail() {
 
   const handleAddBeneficiary = async () => {
     if (!newBeneficiary.name || !newBeneficiary.iban) {
-      setSnackbar({ open: true, message: 'Nom et IBAN requis', severity: 'error' });
+      showMessage('Nom et IBAN requis', 'error');
       return;
     }
     try {
@@ -47,29 +48,29 @@ export default function AccountDetail() {
         method: 'POST',
         body: JSON.stringify(newBeneficiary),
       });
-      setSnackbar({ open: true, message: 'Bénéficiaire ajouté !', severity: 'success' });
+      showMessage('Bénéficiaire ajouté !', 'success');
       setNewBeneficiary({ name: '', iban: '' });
       const bens = await apiFetch<any[]>(`/accounts/${id}/beneficiaries`);
       setBeneficiaries(bens);
     } catch (e: any) {
-      setSnackbar({ open: true, message: e.message || 'Erreur API', severity: 'error' });
+      showMessage(e.message || 'Erreur API', 'error');
     }
   };
 
   const handleDeleteBeneficiary = async (beneficiaryId: number) => {
     try {
       await apiFetch(`/accounts/${id}/beneficiaries/${beneficiaryId}`, { method: 'DELETE' });
-      setSnackbar({ open: true, message: 'Bénéficiaire supprimé.', severity: 'success' });
+      showMessage('Bénéficiaire supprimé.', 'success');
       setBeneficiaries(beneficiaries.filter((b: any) => b.id !== beneficiaryId));
     } catch (e: any) {
-      setSnackbar({ open: true, message: e.message || 'Erreur API', severity: 'error' });
+      showMessage(e.message || 'Erreur API', 'error');
     }
   };
 
   const handleTransfer = async () => {
     setConfirmOpen(false);
     if (!transfer.beneficiaryId || !transfer.amount || isNaN(Number(transfer.amount)) || Number(transfer.amount) <= 0) {
-      setSnackbar({ open: true, message: 'Sélectionnez un bénéficiaire et un montant valide', severity: 'error' });
+      showMessage('Sélectionnez un bénéficiaire et un montant valide', 'error');
       return;
     }
     setTransferLoading(true);
@@ -81,13 +82,13 @@ export default function AccountDetail() {
           amount: Number(transfer.amount),
         }),
       });
-      setSnackbar({ open: true, message: 'Virement effectué !', severity: 'success' });
+      showMessage('Virement effectué !', 'success');
       setTransfer({ beneficiaryId: '', amount: '' });
       // Rafraîchir transactions
       const txs = await apiFetch<any[]>(`/transactions/account/${id}`);
       setTransactions(txs);
     } catch (e: any) {
-      setSnackbar({ open: true, message: e.message || 'Erreur API', severity: 'error' });
+      showMessage(e.message || 'Erreur API', 'error');
     } finally {
       setTransferLoading(false);
     }
@@ -98,13 +99,6 @@ export default function AccountDetail() {
       <Typography variant="h4" gutterBottom>Détail du compte</Typography>
       {loading && <CircularProgress />}
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        message={snackbar.message}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      />
       {!loading && !error && account && (
         <>
           <Paper sx={{ p: 2, mb: 3 }}>
@@ -165,6 +159,7 @@ export default function AccountDetail() {
                 SelectProps={{ native: true }}
                 size="small"
                 sx={{ minWidth: 200 }}
+                inputProps={{ 'aria-label': 'Bénéficiaire' }}
               >
                 <option value="">Sélectionner</option>
                 {beneficiaries.map((b: any) => (

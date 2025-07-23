@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Badge, IconButton, Tooltip, Snackbar } from '@mui/material';
+import { Badge, IconButton, Tooltip } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useNavigate } from 'react-router-dom';
 import { connectWebSocket, subscribeToNotifications } from '../services/websocket';
+import { useFeedback } from './FeedbackProvider';
 
 const WS_URL = 'ws://localhost:8080/notifications'; // À adapter selon ton backend
 
 const NotificationsBadge: React.FC = () => {
   const [unread, setUnread] = useState(0);
-  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string }>({ open: false, message: '' });
   const [notifications, setNotifications] = useState<any[]>([]);
   const navigate = useNavigate();
+  const { showMessage } = useFeedback();
 
   useEffect(() => {
     connectWebSocket(WS_URL);
     const unsubscribe = subscribeToNotifications((msg) => {
       setUnread(u => u + 1);
-      setSnackbar({ open: true, message: msg.content || 'Nouvelle notification' });
+      showMessage(msg.content || 'Nouvelle notification', 'info');
       setNotifications(prev => [
         {
           id: msg.id || Date.now().toString(),
@@ -44,13 +45,6 @@ const NotificationsBadge: React.FC = () => {
           </Badge>
         </IconButton>
       </Tooltip>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        message={snackbar.message}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      />
     </>
   );
 };

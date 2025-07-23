@@ -17,8 +17,6 @@ interface Loan {
 
 const Loans: React.FC = () => {
   const [loans, setLoans] = useState<Loan[]>([]);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const { control, handleSubmit, reset } = useForm();
   const [userId, setUserId] = useState<string | null>(null);
   const { showMessage } = useFeedback();
@@ -33,8 +31,6 @@ const Loans: React.FC = () => {
   }, []);
 
   const onSubmit = (data: any) => {
-    setSuccess(null);
-    setError(null);
     apiFetch('/loans', {
       method: 'POST',
       body: JSON.stringify({
@@ -46,7 +42,7 @@ const Loans: React.FC = () => {
       headers: { 'Content-Type': 'application/json' },
     })
       .then(() => {
-        setSuccess('Demande envoyée !');
+        showMessage('Demande envoyée !', 'success');
         reset();
         if (userId) {
           apiFetch<Loan[]>(`/loans/user/${userId}`).then(data => setLoans(data));
@@ -88,8 +84,6 @@ const Loans: React.FC = () => {
         <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
           Envoyer la demande
         </Button>
-        {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
-        {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
       </Box>
       <Divider sx={{ my: 2 }} />
       <Typography variant="h6" color="primary" gutterBottom>

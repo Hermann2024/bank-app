@@ -1,4 +1,5 @@
-import { createTheme, PaletteMode } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
+type PaletteMode = 'light' | 'dark';
 
 export const createBankTheme = (mode: PaletteMode) => createTheme({
   palette: {

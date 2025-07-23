@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Box, TextField, Button, Divider, Alert } from '@mui/material';
 import { getUser } from '../services/authService';
+import { useFeedback } from '../components/FeedbackProvider';
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [edit, setEdit] = useState(false);
   const [form, setForm] = useState({ name: '', email: '' });
   const [passwords, setPasswords] = useState({ old: '', new: '', confirm: '' });
-  const [success, setSuccess] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { showMessage } = useFeedback();
 
   useEffect(() => {
     const u = getUser();
@@ -25,15 +25,15 @@ const Profile: React.FC = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
   const handleSave = () => {
-    setSuccess('Modifications enregistrées (mock)');
+    showMessage('Modifications enregistrées (mock)', 'success');
     setEdit(false);
   };
   const handlePasswordChange = () => {
     if (passwords.new !== passwords.confirm) {
-      setError('Les mots de passe ne correspondent pas');
+      showMessage('Les mots de passe ne correspondent pas', 'error');
       return;
     }
-    setSuccess('Mot de passe modifié (mock)');
+    showMessage('Mot de passe modifié (mock)', 'success');
     setPasswords({ old: '', new: '', confirm: '' });
   };
 
@@ -103,8 +103,6 @@ const Profile: React.FC = () => {
       <Button variant="contained" color="primary" onClick={handlePasswordChange} sx={{ mt: 2 }}>
         Modifier le mot de passe
       </Button>
-      {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
-      {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
     </Container>
   );
 };

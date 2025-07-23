@@ -18,6 +18,7 @@ import Login from './pages/Login';
 import { isAuthenticated, logout as doLogout, getUser } from './services/authService';
 import AccountDetail from './pages/AccountDetail';
 import Notifications from './pages/Notifications';
+import type { ReactNode, ReactElement } from 'react';
 
 function Home() {
   return <Box p={3}><Typography variant="h4">Accueil</Typography></Box>;
@@ -41,12 +42,12 @@ const navItems = [
   { text: 'Notifications', icon: <NotificationsIcon />, path: '/notifications' },
 ];
 
-function PrivateRoute({ children }: { children: JSX.Element }) {
+function PrivateRoute({ children }: { children: ReactNode }): ReactElement | null {
   const location = useLocation();
   if (!isAuthenticated()) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
-  return children;
+  return <>{children}</>;
 }
 
 function AppContent() {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, List, ListItem, ListItemText, Button, Select, MenuItem, Box, Divider, Alert } from '@mui/material';
+import { useFeedback } from '../components/FeedbackProvider';
 
 interface User {
   id: number;
@@ -16,7 +17,7 @@ const mockUsers: User[] = [
 
 const Admin: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [success, setSuccess] = useState<string | null>(null);
+  const { showMessage } = useFeedback();
 
   useEffect(() => {
     setUsers(mockUsers); // À remplacer par un appel API réel
@@ -24,11 +25,11 @@ const Admin: React.FC = () => {
 
   const handleRoleChange = (id: number, newRole: string) => {
     setUsers(users.map(u => u.id === id ? { ...u, roles: [newRole] } : u));
-    setSuccess('Rôle modifié (mock)');
+    showMessage('Rôle modifié (mock)', 'success');
   };
   const handleDelete = (id: number) => {
     setUsers(users.filter(u => u.id !== id));
-    setSuccess('Utilisateur supprimé (mock)');
+    showMessage('Utilisateur supprimé (mock)', 'success');
   };
 
   return (
@@ -61,7 +62,6 @@ const Admin: React.FC = () => {
         {users.length === 0 && <Typography>Aucun utilisateur.</Typography>}
       </List>
       <Divider sx={{ my: 2 }} />
-      {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
     </Container>
   );
 };

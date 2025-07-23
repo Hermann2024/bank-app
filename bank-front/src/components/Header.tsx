@@ -34,11 +34,13 @@ const Header: React.FC = () => {
           Banque Moderne
         </Typography>
         <NotificationsBadge />
+        {/*
         <Tooltip title={mode === 'dark' ? 'Mode clair' : 'Mode sombre'}>
           <IconButton sx={{ mr: 2 }} onClick={toggleColorMode} color="inherit">
             {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
         </Tooltip>
+        */}
         {user && (
           <Box display="flex" alignItems="center">
             <Typography variant="body1" sx={{ mr: 2 }}>

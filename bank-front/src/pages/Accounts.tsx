@@ -3,24 +3,24 @@ import { Box, Typography, Paper, List, ListItem, ListItemText, CircularProgress,
 import { apiFetch } from '../services/api';
 import { getUser } from '../services/authService';
 import { useNavigate } from 'react-router-dom';
+import { useFeedback } from '../components/FeedbackProvider';
 
 export default function Accounts() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { showMessage } = useFeedback();
 
   useEffect(() => {
     async function fetchAccounts() {
       setLoading(true);
-      setError('');
       try {
         const user = getUser();
         if (!user) throw new Error('Utilisateur non connecté');
         const data = await apiFetch<any[]>(`/accounts/user/${encodeURIComponent(user.email)}`);
         setAccounts(data);
       } catch (e: any) {
-        setError(e.message || 'Erreur API');
+        showMessage(e.message || 'Erreur API', 'error');
       } finally {
         setLoading(false);
       }
@@ -32,7 +32,6 @@ export default function Accounts() {
     <Box p={3}>
       <Typography variant="h4" gutterBottom>Mes comptes</Typography>
       {loading && <CircularProgress />}
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
       {!loading && !error && (
         <Paper sx={{ p: 2 }}>
           <List>
